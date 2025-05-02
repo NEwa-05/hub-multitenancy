@@ -1,0 +1,88 @@
+image:
+  registry: ghcr.io
+  repository: traefik/traefik-hub
+  tag: "v3"
+deployment:
+  replicas: 1
+ingressRoute:
+  dashboard:
+    enabled: false
+ingressClass:
+  enabled: false
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowExternalNameServices: true
+    allowEmptyServices: true
+    namespaces:
+      - tenant3
+logs:
+  general:
+    format: json
+    level: DEBUG
+  access:
+    enabled: true
+    format: json
+    addInternals: false
+    fields:
+      general:
+        defaultmode: keep
+      headers:
+        defaultmode: keep
+# metrics:
+#   addInternals: false
+#   prometheus: null
+#   otlp:
+#     enabled: true
+#     addentrypointslabels: true
+#     addrouterslabels: true
+#     addserviceslabels: true
+#     http:
+#       enabled: true
+#       endpoint: http://prometheus-stack-kube-prom-prometheus.observability:9090/api/v1/otlp/v1/metrics
+#       tls:
+#         insecureSkipVerify: true
+# tracing:
+#   addInternals: false
+#   otlp:
+#     enabled: true
+#     http:
+#       enabled: true
+#       endpoint: http://simplest-collector.observability.svc.cluster.local:4318/v1/traces
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: "app.kubernetes.io/name"
+                operator: In
+                values:
+                  - traefik
+          topologyKey: kubernetes.io/hostname
+        weight: 100
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 100m
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: tenant3-wildcard-mageekbox
+ports:
+  websecure:
+    tls:
+      enabled: true
+hub:
+  token: hub-license
+  apimanagement:
+    enabled: true
+  namespaces:
+    - tenant3
+  redis:
+    endpoints: redis-master.redis.svc.cluster.local:6379
+rbac:
+  namespaced: true

@@ -9,6 +9,7 @@ Test hub apim multitenancy
 ```bash
 LEGO_DISABLE_CNAME_SUPPORT=true lego -a --path .lego/. --email mageekbox@gmail.com --dns gandiv5 -d "tenant1.${CLUSTERNAME}.${DOMAINNAME}" -d "*.tenant1.${CLUSTERNAME}.${DOMAINNAME}" run
 LEGO_DISABLE_CNAME_SUPPORT=true lego -a --path .lego/. --email mageekbox@gmail.com --dns gandiv5 -d "tenant2.${CLUSTERNAME}.${DOMAINNAME}" -d "*.tenant2.${CLUSTERNAME}.${DOMAINNAME}" run
+LEGO_DISABLE_CNAME_SUPPORT=true lego -a --path .lego/. --email mageekbox@gmail.com --dns gandiv5 -d "tenant3.${CLUSTERNAME}.${DOMAINNAME}" -d "*.tenant3.${CLUSTERNAME}.${DOMAINNAME}" run
 ```
 
 ## deploy Redis
@@ -133,6 +134,65 @@ envsubst < tenant2/hub/dashboard.yaml | kubectl apply -f -
 ```bash
 kubectl apply -f tenant2/apis
 kubectl apply -f tenant2/apim-objs
+```
+
+
+## Deploy Hub tenant3
+
+### Create tenant3 namespace
+
+```bash
+kubectl create ns tenant3
+```
+
+## Create tenant3 secret from cert file
+
+```bash
+kubectl create secret tls tenant3-wildcard-mageekbox --namespace tenant3 --cert=.lego/certificates/tenant3.${CLUSTERNAME}.${DOMAINNAME}.crt --key=.lego/certificates/tenant3.${CLUSTERNAME}.${DOMAINNAME}.key
+```
+
+### Create tenant3 Hub token secret
+
+```bash
+kubectl create secret generic hub-license --from-literal=token="${TENANT3_HUB_TOKEN}" -n tenant3
+```
+
+### deploy tenant3 Traefik
+
+```bash
+helm upgrade --install traefik traefik/traefik --create-namespace --namespace tenant3 --values tenant3/hub/hub-values.yaml
+```
+
+### Set tenant3 DNS entry
+
+```bash
+ADDRECORD='{
+  "rrset_type": "CNAME",
+  "rrset_name": "*.tenant3.'$CLUSTERNAME'",
+  "rrset_ttl": "1800",
+  "rrset_values": [
+    "'$(kubectl get svc/traefik -n tenant3 --no-headers | awk {'print $4'})'."
+  ]
+}'
+curl -s -X POST -d $ADDRECORD \
+  -H "Authorization: Apikey $GANDIV5_API_KEY" \
+  -H "Content-Type: application/json" \
+  https://api.gandi.net/v5/livedns/domains/$DOMAINNAME/records
+```
+
+### Add tenant3 Hub dashboard ingress if needed
+
+```bash
+envsubst < tenant3/hub/dashboard.yaml | kubectl apply -f -
+```
+
+## deploy tenant3 api
+
+### use tenant3 file to deploy
+
+```bash
+kubectl apply -f tenant3/apis
+kubectl apply -f tenant3/apim-objs
 ```
 
 ## Deploy Monitoring
