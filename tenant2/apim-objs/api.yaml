@@ -1,0 +1,13 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: API
+metadata:
+  name: employee-api
+  namespace: tenant2
+  labels:
+    area: employee
+    module: crm
+spec:
+  openApiSpec:
+    path: /openapi.yaml
+    validateRequestMethodAndPath: false

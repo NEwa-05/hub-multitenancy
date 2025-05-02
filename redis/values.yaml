@@ -1,0 +1,15 @@
+architecture: standalone
+master:
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 128Mi
+      cpu: 100m
+auth:
+  enabled: false
+persistence:
+  enabled: false
+sentinel:
+  enabled: false

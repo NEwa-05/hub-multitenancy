@@ -1,0 +1,40 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: API
+metadata:
+  name: customer-api-versioned
+  namespace: tenant1
+  labels:
+    area: customers
+    module: crm
+spec:
+  versions:
+    - name: customer-api-v1
+    - name: customer-api-v2
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIVersion
+metadata:
+  name: customer-api-v1
+  namespace: tenant1
+spec:
+  release: 1.0.0
+  openApiSpec:
+    path: /openapi.yaml
+    validateRequestMethodAndPath: false
+    operationSets:
+      - name: readonly
+        matchers:
+          - methods: ["GET"]
+            path: /customers
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIVersion
+metadata:
+  name: customer-api-v2
+  namespace: tenant1
+spec:
+  release: 2.0.0
+  openApiSpec:
+    path: /openapi.yaml
+    validateRequestMethodAndPath: false

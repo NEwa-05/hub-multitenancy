@@ -1,0 +1,28 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: customers-api-catalog-standard
+  namespace: tenant1
+spec:
+  apiPlan:
+    name: standard
+  apis:
+  - name: customer-api-versioned
+  groups:
+    - admin
+    - internal-admin
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: customers-api-catalog-vip
+  namespace: tenant1
+spec:
+  apiPlan:
+    name: vip
+  apis:
+  - name: customer-api-versioned
+  groups:
+    - admin
+    - internal-admin

@@ -1,0 +1,28 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: standard
+  namespace: tenant1
+spec:
+  quota:
+    limit: 20
+    period: 1h
+  rateLimit:
+    limit: 5
+    period: 10s
+  title: Standard plan
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: vip
+  namespace: tenant1
+spec:
+  quota:
+    limit: 2000
+    period: 1h
+  rateLimit:
+    limit: 500
+    period: 60s
+  title: VIP plan

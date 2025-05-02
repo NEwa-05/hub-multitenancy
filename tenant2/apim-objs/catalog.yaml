@@ -1,0 +1,10 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: employees-api-catalog
+  namespace: tenant2
+spec:
+  apis:
+  - name: employee-api
+  everyone: true

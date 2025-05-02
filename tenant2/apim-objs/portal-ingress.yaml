@@ -1,0 +1,18 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: apiportal
+  namespace: tenant2
+  annotations:
+    hub.traefik.io/api-portal: portal
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`portal.tenant2.dbl25tst3w18.mageekbox.eu`)
+    kind: Rule
+    services:
+    - name: apiportal
+      port: 9903
+  tls: {}

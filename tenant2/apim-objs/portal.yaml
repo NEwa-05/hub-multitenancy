@@ -1,0 +1,13 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPortal
+metadata:
+  name: portal
+  namespace: tenant2
+spec:
+  title: API Portal
+  description: "Developer Portal"
+  trustedUrls:
+    - https://portal.tenant2.dbl25tst3w18.mageekbox.eu
+  ui:
+    logoUrl: https://traefik.io/favicon.png

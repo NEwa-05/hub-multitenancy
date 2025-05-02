@@ -1,0 +1,16 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hub-dashboard
+  namespace: tenant2
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`hub.tenant2.${CLUSTERNAME}.${DOMAINNAME}`)
+      services:
+        - name: api@internal
+          kind: TraefikService
+  tls: {}
